@@ -2,7 +2,7 @@
 This repo will have examples of docetl usage.
 please ensure to create a .env file in the root and add OPENAI_API_KEY as below
 
-OPENAI_API_KEY = <mention your openai key>
+OPENAI_API_KEY = < mention your openai key >
 
 #### How to use docetl to extract topics from youtube video
 
