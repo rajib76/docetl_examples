@@ -1,0 +1,44 @@
+parsing_tools:
+  - name: parse_youtube_video
+    function_code: |
+      def parse_youtube_video(document: Dict) -> List[Dict]:
+          import json
+          from youtube_transcript_api import YouTubeTranscriptApi
+          transcript = YouTubeTranscriptApi.get_transcript(document["video_id"])
+          texts = transcript
+          transcript = ""
+          for text in texts:
+              transcript = transcript + " " + text["text"]
+          json_content = {"transcript": transcript.replace("'", "")}
+          return [json_content]
+datasets:
+  audio_transcript:
+    type: file
+    source: local
+    path: "./data/video_ids.json"
+    parsing:
+      - function: parse_youtube_video
+
+default_model: gpt-4o-mini
+operations:
+  - name: extract_topics
+    type: map
+    output:
+      schema:
+        topics: list[str]
+    prompt: |
+      Analyze the following transcript :
+      {{ input.transcript }}
+      Extract and list all key topics mentioned in the transcript.
+      If no topics are mentioned, return an empty list.
+
+pipeline:
+  steps:
+    - name: analyze_video
+      input: audio_transcript
+      operations:
+        - extract_topics
+  output:
+    type: file
+    path: audio_topics.json
+    intermediate_dir: intermediate_results

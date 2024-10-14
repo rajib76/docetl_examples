@@ -1,0 +1,3 @@
+openai
+docetl
+youtube_transcript_api
